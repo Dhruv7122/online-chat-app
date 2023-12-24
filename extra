@@ -1,0 +1,49 @@
+for(let i=0;i<searchusers.length;i++){
+                            if(searchusers[i]["_id"] == sender_id){
+                                continue;
+                            }
+                            html += `<div class="row sideBar-body" data-id="`+searchusers[i]["_id"]+`">
+                            <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                                <div class="avatar-icon">
+                                    <img src="`+searchusers[i]["image"]+`" />
+                                </div>
+                            </div>
+                            <div class="col-sm-9 col-xs-9 sideBar-main">
+                                <div class="row">
+                                    <div class="col-sm-8 col-xs-8 sideBar-name">
+                                        <span class="name-meta">`+searchusers[i]["name"]+` </span>
+                                    </div>
+                                    <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
+                                        <span class="time-meta pull-right">18:18 </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                        }
+
+
+if(searchusers[i]["_id"] != sender_id){}
+
+for(let x=0;x<searchusers[i]["friends"].length;x++){
+                                if()
+                            }
+
+
+
+<div class="row sideBar-body">
+                            <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                                <div class="avatar-icon">
+                                    <img src="`+data.sender.image+`" />
+                                </div>
+                            </div>
+                            <div class="col-sm-9 col-xs-9 sideBar-main">
+                                <div class="row">
+                                    <div class="col-sm-8 col-xs-8 sideBar-name">
+                                        <span class="name-meta">`+data.sender.name+`</span>
+                                    </div>
+                                    <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
+                                        <span class="time-meta pull-right">18:18 </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"
+        integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn4ZEO3Qt/HFklTJBj/gBOV8G3HcKn4NfQblz"
+        crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <div class="container app">
+
+        <div class="row app-one">
+            <div class="alert alert-success" id="accept-alert" style="height:auto;">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Friend Request Accepted!</strong>
+            </div>
+            <div class="alert alert-danger" id="reject-alert" style="height:auto;">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Friend Request Rejected!</strong>
+            </div>
+
+            <div class="col-sm-4 side">
+                {{!-- Dashboard --}}
+                <div class="side-one">
+                    {{!-- login user profile --}}
+                    <div class="row heading">
+                        {{!-- login user avatar --}}
+                        <div class="col-sm-2 col-xs-3 heading-avatar">
+                            <div class="heading-avatar-icon">
+                                <img src="{{user.image}}" id="avatar" />
+                            </div>
+                        </div>
+                        {{!-- login user name --}}
+                        <div class="col-sm-4 col-xs-4 sideBar-name">
+                            <span id="userName" class="name-meta" style="font-size: medium;">{{user.name}} </span>
+                        </div>
+                        {{!-- logout --}}
+                        <div class="col-sm-1 col-xs-1 heading-dot pull-right">
+                            <a id="logout" href="/logout"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="40"
+                                    fill="gray" class="bi bi-box-arrow-right pull-right" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                        d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                                    <path fill-rule="evenodd"
+                                        d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+                                </svg></a>
+                        </div>
+                        {{!--new chat icon --}}
+                        <div class="col-sm-1 col-xs-1 heading-compose pull-right">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="40" fill="grey"
+                                class="bi bi-person-fill-add pull-right" viewBox="0 0 16 16">
+                                <path
+                                    d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                <path
+                                    d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4" />
+                            </svg>
+                            {{!-- <i class="fa fa-comments fa-2x pull-right" aria-hidden="true"></i> --}}
+                        </div>
+                        {{!--new request icon --}}
+                        <div class="col-sm-1 col-xs-1 heading-notification pull-right">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="40" fill="grey"
+                                class="bi bi-bell-fill pull-right" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
+                            </svg>
+
+                        </div>
+                    </div>
+                    {{!-- list of users --}}
+                    <div class="row sideBar" id="userlist">
+                        {{#each users}}
+                        <div class="row sideBar-body" data-id="{{this._id}}">
+                            <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                                <div class="avatar-icon">
+                                    <img src="{{this.image}}" />
+                                </div>
+                            </div>
+                            <div class="col-sm-9 col-xs-9 sideBar-main">
+                                <div class="row">
+                                    <div class="col-sm-8 col-xs-8 sideBar-name">
+                                        <span id="Rname" class="name-meta">{{this.name}} </span>
+                                        {{#if this.is_online}}
+                                        <div class="name-meta online-status" id={{this._id}}>Online</div>
+                                        {{else}}
+                                        <div class="name-meta offline-status" id={{this._id}}>Offline</div>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{!-- search user bar --}}
+                <div class="side-two">
+                    {{!-- search bar heading and alert --}}
+                    <div class="row newMessage-heading">
+                        {{!-- sent request alert --}}
+                        <div class="alert alert-success" id="sentreq-alert" style="margin:0%;height:auto;">
+                            <button type="button" class="close" data-dismiss="alert">x</button>
+                            <strong>Friend Request sent!</strong>
+                        </div>
+                        {{!-- heading --}}
+                        <div class="row newMessage-main">
+                            <div class="col-sm-2 col-xs-2 newMessage-back">
+                                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                            </div>
+                            <div class="col-sm-10 col-xs-10 newMessage-title">New Chat</div>
+                        </div>
+                    </div>
+                    {{!-- search bar --}}
+                    <div class="row composeBox">
+                        <div class="col-sm-12 composeBox-inner">
+                            <div class="form-group has-feedback">
+                                {{!-- search user form --}}
+                                <form action="" id="searchuser">
+                                    <input type="hidden" name="id" value="{{user._id}}" />
+                                    <div class="col-sm-10">
+                                        <input id="name" type="text" class="form-control" placeholder="Search People"
+                                            autocomplete="off" required>
+                                        </input>
+                                    </div>
+                                    <div class="col-sm-2" style="height: 34px;">
+                                        <button type="submit" class="buton" style="height: 34px;">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {{!-- users --}}
+                    <div class="row compose-sideBar search">
+                        {{!-- dynamic component --}}
+                    </div>
+                </div>
+                {{!-- incoming requests --}}
+                <div class="side-three">
+                    {{!-- heading --}}
+                    <div class="row  newMessage-heading">
+                        <div class="row newMessage-main">
+                            <div class="col-sm-2 col-xs-2 newMessage-back">
+                                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                            </div>
+                            <div class="col-sm-10 col-xs-10 newMessage-title">Friend Request</div>
+                        </div>
+                    </div>
+                    {{!-- all requests --}}
+                    <div class="row compose-sideBar requests">
+                        {{!-- dynamic component --}}
+                    </div>
+                </div>
+                {{!-- profile update and report generate --}}
+                <div class="side-four">
+                    {{!-- heading --}}
+                    <div class="row  newMessage-heading">
+                        <div class="row newMessage-main">
+                            <div class="col-sm-2 col-xs-2 newMessage-back">
+                                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                            </div>
+                            <div class="col-sm-10 col-xs-10 newMessage-title">Profile</div>
+                        </div>
+                    </div>
+                    {{!-- body --}}
+                    <div class="row compose-sideBar">
+                        {{!-- report --}}
+                        <div class="report">
+                            <form action="" id="generateReport">
+                                <div class="col-sm-8 col-xs-8 sideBar-name pull-left" style="text-align: left;">
+                                    Generate Report:
+                                </div>
+                                <div class="col-sm-4 col-xs-4">
+                                    <button id="reportButton" type="submit" class="btn btn-primary">Generate</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="report" id="report">
+                            <div class="row">
+                                <div class="col-sm-8 col-xs-8 sideBar-name pull-left" style="text-align: left;">
+                                    No. of Logins :
+                                </div>
+                                <div id="loginCount" class="col-sm-4 col-xs-4 sideBar-name pull-left">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8 col-xs-8 sideBar-name pull-left" style="text-align: left;">
+                                    No. of Active Users :
+                                </div>
+                                <div id="activeCount" class="col-sm-4 col-xs-4 sideBar-name pull-left"
+                                    style="text-align: left;">
+
+                                </div>
+                            </div>
+                        </div>
+                        {{!-- profile update --}}
+                        <div class="profile">
+                            <div class="col-sm-8 col-xs-8 sideBar-name pull-left" style="text-align: left;">
+                                Update Profile:
+                            </div>
+                            <div class="col-sm-4 col-xs-4">
+                                <button id="update" class="btn btn-primary" style="padding-bottom: 0px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor"
+                                        class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="profile" id="profile">
+                            <form action="" id="updateProfile">
+                                <div class="profile">
+                                    <input name="newName" class="form-control oldname" type="text" autofocus="on"
+                                        required>
+                                </div>
+                                <div class="profile">
+                                    <button class="btn btn-primary" type="reset">Reset</button>
+                                    <button class="btn btn-primary" type="submit">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{!-- when user login --}}
+            <div class="col-sm-8 conversation" id="notstarted">
+                <div style="padding: 20px 0px 0px 20px;">Click User to Start the Chat</div>
+            </div>
+
+            {{!-- when user click on userlist --}}
+            <div class="col-sm-8 conversation" id="started">
+                {{!-- receiver info --}}
+                <div class="row heading">
+                    <div class="col-sm-2 col-md-1 col-xs-3 heading-avatar">
+                        <div class="heading-avatar-icon" id="receiver-avatar">
+
+                        </div>
+                    </div>
+                    <div class="col-sm-8 col-xs-7 heading-name" id="receiver-name">
+
+                    </div>
+                    <div class="col-sm-1 col-xs-1 heading-dot pull-right">
+                        <i class="fa fa-ellipsis-v fa-2x pull-right" aria-hidden="true"></i>
+                    </div>
+                </div>
+                {{!-- chat box --}}
+                <div class="row message" id="conversation">
+                    <div class="row message-previous">
+                        <div class="col-sm-12 previous">
+                        </div>
+                    </div>
+                </div>
+                {{!-- reply box --}}
+                <form action="" id="chat-form">
+                    <div class="row reply">
+                        <div class="col-sm-1 col-xs-1 reply-emojis">
+                            <i class="fa fa-smile-o fa-2x"></i>
+                        </div>
+                        <div class="col-sm-10 col-xs-10 reply-main">
+                            <input class="form-control" rows="1" id="message" placeholder="Message" required></input>
+                        </div>
+                        <div class="col-sm-1 col-xs-1 reply-send">
+                            <button type="submit" class="buton">
+                                <i class="fa fa-send fa-2x" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#accept-alert").hide();
+            $("#sentreq-alert").hide();
+            $("#reject-alert").hide();
+            $("#report").hide();
+            $("#profile").hide();
+        });
+
+        //user connect to channel
+        var sender_id = '{{user._id}}';
+        var receiver_id;
+        var socket = io('/userspace', {
+            auth: {
+                token: "{{user._id}}"
+            }
+        });
+
+        //search users
+        $("#searchuser").submit(function (event) {
+            event.preventDefault();
+            var user = $("#name").val();
+            $.ajax({
+                url: "/searchuser",
+                type: "POST",
+                data: {
+                    name: user
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $(".search").html("");
+                        let searchusers = response.searchUser;
+                        let html = "";
+                        if (searchusers.length == 0) {
+                            html += `<div class="col-sm-12 col-xs-12">User Not Found.</div>`;
+                            $(".search").append(html);
+                        }
+                        else {
+                            for (let i = 0; i < searchusers.length; i++) {
+                                html += `
+                                <div id="requestuser" class="row sideBar-body" data-id="`+ searchusers[i]["_id"] + `">
+                                    <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                                        <div class="avatar-icon">
+                                            <img src="`+ searchusers[i]["image"] + `" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-9 col-xs-9 sideBar-main">
+                                        <div class="row">
+                                            <div class="col-sm-8 col-xs-8 sideBar-name">
+                                                <span class="name-meta">`+ searchusers[i]["name"] + ` </span>
+                                            </div>
+                                            <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
+                                                <span class="time-meta pull-right"><button type="submit" class="btn btn-primary" id="requestbutton" style="width:100%;" onclick="sendrequest()">Add</button></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            }
+                            $(".search").append(html);
+                        }
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+
+        //send request
+        function sendrequest() {
+            event.preventDefault();
+            var receiver = $("#requestuser").attr('data-id');
+            $.ajax({
+                url: "/addFriend",
+                type: "POST",
+                data: {
+                    sender: sender_id,
+                    receiver: receiver
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#sentreq-alert").fadeTo(1000, 500).slideUp(500, function () {
+                            $("#sentreq-alert").slideUp(500);
+                        });
+                        $('#requestbutton').attr('disabled', 'disabled').html(`<svg xmlns="http://www.w3.org/2000/svg" width="23" height="19" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                        </svg>`);
+                        socket.emit("request", response.data);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
+
+        //new friend request
+        socket.on("new-friend-request", (data) => {
+
+            html = ``;
+            html += `
+                <div id="requestuser" class="row sideBar-body" data-id="`+ data.request_id + `">
+                    <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                        <div class="avatar-icon">
+                            <img src="`+ data.sender.image + `" />
+                        </div>
+                    </div>
+                    <div class="col-sm-9 col-xs-9 sideBar-main">
+                        <div class="row">
+                            <div class="col-sm-6 col-xs-6 sideBar-name">
+                                <span class="name-meta">`+ data.sender.name + ` </span>
+                            </div>
+                            <div class="col-sm-3 col-xs-3 pull-right sideBar-time">
+                                <span class="pull-right"><button type="submit" class="btn btn-danger" style="width:100%;" id="rejectbutton" onclick="rejectrequest()"><i class="fa fa-times" aria-hidden="true"></i></button></span>
+                            </div>
+                            <div class="col-sm-3 col-xs-3 pull-right sideBar-time">
+                                <span class="pull-right"><button type="submit" class="btn btn-success" style="width:100%;" id="acceptbutton" onclick="acceptrequest()"><i class="fa fa-check" aria-hidden="true"></i></button></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            //alert(data.message);
+            $("#norequests").remove();
+            $(".requests").append(html);
+        });
+
+        //accept friend request
+        function acceptrequest() {
+            var request_id = $("#requestuser").attr("data-id");
+            //console.log(request_id);
+            socket.emit("accepted", request_id);
+            $('div[id="requestuser"]')
+                .filter(function () {
+                    return $(this).data("id") == request_id;
+                }).remove();
+            $("#accept-alert").fadeTo(1000, 500).slideUp(500, function () {
+                $("#accept-alert").slideUp(500);
+            });
+            $.toast({
+                heading: 'Success',
+                text: 'request Accepted',
+                showHideTransition: 'slide',
+                icon: 'success'
+            });
+        }
+
+        //update dashboard with new frd
+        socket.on("request_accepted", (data) => {
+            console.log(data.newFrd.is_online);
+            html = ``;
+            html += `<div class="row sideBar-body" data-id="` + data.newFrd._id + `">
+                    <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                        <div class="avatar-icon">
+                            <img src="`+ data.newFrd.image + `" />
+                        </div>
+                    </div>
+                    <div class="col-sm-9 col-xs-9 sideBar-main">
+                        <div class="row">
+                            <div class="col-sm-8 col-xs-8 sideBar-name">
+                                <span class="name-meta">`+ data.newFrd.name + ` </span>
+                                <div class="name-meta offline-status" id="`+ data.newFrd._id + `"></div>
+                            </div>
+                            <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
+                                <span class="time-meta pull-right">18:18 </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            $("#userlist").append(html);
+            if (data.newFrd.is_online == 1) {
+                $('#' + data.newFrd._id).text("Online");
+                $('#' + data.newFrd._id).removeClass("offline-status");
+                $('#' + data.newFrd._id).addClass("online-status");
+            } else {
+                $('#' + data.newFrd._id).text("Offline");
+                $('#' + data.newFrd._id).removeClass("online-status");
+                $('#' + data.newFrd._id).addClass("offline-status");
+            }
+            $('.sideBar-body').click(function () {
+                receiver_id = $(this).attr('data-id');
+                $('#notstarted').hide();
+                $('#started').show();
+
+                //requesting old chats from server
+                socket.emit('existChats', { sender_id: sender_id, receiver_id: receiver_id });
+            });
+            $('#requestbutton').text("Friend");
+            $("#accept-alert").fadeTo(1000, 500).slideUp(500, function () {
+                $("#accept-alert").slideUp(500);
+            });
+        });
+
+        //reject friend request
+        function rejectrequest() {
+            var request_id = $("#requestuser").attr("data-id");
+            //console.log(request_id);
+            socket.emit("rejected", request_id);
+            $('div[id="requestuser"]')
+                .filter(function () {
+                    return $(this).data("id") == request_id;
+                }).remove();
+            $("#reject-alert").fadeTo(1000, 500).slideUp(500, function () {
+                $("#reject-alert").slideUp(500);
+            });
+
+        }
+
+        //alert that friend request rejected
+        socket.on("request_rejected", (data) => {
+            //alert(data.message);
+            $('#requestbutton').removeAttr('disabled').text("Add");
+            $("#reject-alert").fadeTo(1000, 500).slideUp(500, function () {
+                $("#reject-alert").slideUp(500);
+            });
+        });
+
+        //chat save of user
+        $("#chat-form").submit(function (event) {
+            event.preventDefault();
+            var message = $("#message").val();
+            $.ajax({
+                url: "/save-chat",
+                type: "POST",
+                data: {
+                    sender_id: sender_id,
+                    receiver_id: receiver_id,
+                    message: message
+                },
+                success: function (response) {
+                    if (response.success) {
+                        //emptying message box
+                        $("#message").val("");
+                        let chat = response.data.message;
+                        let html = `
+                        <div class="row message-body">
+                        <div class="col-sm-12 message-main-sender">
+                            <div class="sender">
+                                <div class="message-text">`+ chat + `</div>
+                            </div>
+                        </div>
+                        </div>`;
+                        $("#conversation").append(html);
+                        socket.emit('newChat', response.data);
+                        scrollChat();
+
+                    } else {
+                        alert(response.msg);
+                    }
+                }
+            })
+        });
+
+        //chat loading for receiver
+        socket.on('loadChat', function (data) {
+            //console.log(sender_id);
+            if (sender_id == data.receiver_id && receiver_id == data.sender_id) {
+                let html = `
+                    <div class="row message-body">
+                        <div class="col-sm-12 message-main-receiver">
+                            <div class="receiver">
+                                <div class="message-text">`+ data.message + `</div>
+                            </div>
+                        </div>
+                    </div>`;
+                $("#conversation").append(html);
+            }
+            scrollChat();
+        });
+
+        //update online status
+        socket.on('onlineUser', function (data) {
+            $('#' + data.user_id).text("Online");
+            $('#' + data.user_id).removeClass("offline-status");
+            $('#' + data.user_id).addClass("online-status");
+        });
+
+        //update offline status
+        socket.on('offlineUser', function (data) {
+            $('#' + data.user_id).text("Offline");
+            $('#' + data.user_id).removeClass("online-status");
+            $('#' + data.user_id).addClass("offline-status");
+        });
+
+        //showing old chats
+        socket.on('oldChats', function (data) {
+            $('#conversation').html('');
+            var chats = data.chats;
+            var { image, name } = data.receiver;
+
+            $('#receiver-avatar').html('');
+            $("#receiver-avatar").append(`<img src="` + image + `"></img>`);
+
+            $('#receiver-name').html('');
+            $("#receiver-name").append(`<div class="heading-name-meta" style="font-weight:normal;">` + name + `</div>`);
+
+            let html = '';
+            for (let x = 0; x < chats.length; x++) {
+                let addClass = '';
+                let subclass = '';
+                if (chats[x]['sender_id'] == sender_id) {
+                    addClass = 'message-main-sender'
+                    subclass = 'sender'
+                } else {
+                    addClass = 'message-main-receiver'
+                    subclass = 'receiver'
+                }
+                html += `
+                        <div class="row message-body">
+                        <div class="col-sm-12 `+ addClass + `">
+                            <div class="`+ subclass + `">
+                                <div class="message-text" style="word-wrap: break-word;">`+ chats[x]['message'] + `</div>
+                            </div>
+                        </div>
+                        </div>`;
+            }
+            $("#conversation").append(html);
+            scrollChat();
+        });
+
+        //auto scroll
+        function scrollChat() {
+            $("#conversation").animate({
+                scrollTop: $("#conversation").offset().top + $("#conversation")[0].scrollHeight
+            }, 0);
+        }
+
+        //remaining user search bar (sidebar)
+        $(function () {
+            $(".heading-compose").click(function () {
+                $(".side-two").css({
+                    left: "0",
+                });
+            });
+            $(".newMessage-back").click(function () {
+                $(".side-two").css({
+                    left: "-100%",
+                });
+            });
+        });
+
+        //friend requests bar
+        $(function () {
+            $(".heading-notification").click(function () {
+                $(".side-three").css({
+                    left: "0",
+                });
+                $.ajax({
+                    url: "/getrequests",
+                    type: "POST",
+                    data: {
+                        sender: sender_id
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $(".requests").html("");
+                            let friendRequests = response.data;
+                            let html = "";
+                            if (friendRequests.length == 0) {
+                                html += `<div class="col-sm-12 col-xs-12" style="padding-top:20px" id="norequests" >No Requests.</div>`;
+                                $(".requests").append(html);
+                            }
+                            else {
+                                for (let i = 0; i < friendRequests.length; i++) {
+                                    html += `
+                                        <div id="requestuser" class="row sideBar-body" data-id="`+ friendRequests[i]["_id"] + `">
+                                            <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                                                <div class="avatar-icon">
+                                                    <img src="`+ friendRequests[i]["sender"]["image"] + `" />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-9 col-xs-9 sideBar-main">
+                                                <div class="row">
+                                                    <div class="col-sm-6 col-xs-6 sideBar-name">
+                                                        <span class="name-meta">`+ friendRequests[i]["sender"]["name"] + ` </span>
+                                                    </div>
+                                                    <div class="col-sm-3 col-xs-3 pull-right sideBar-time">
+                                                        <span class="pull-right"><button type="submit" class="btn btn-danger" style="width:100%;" id="rejectbutton" onclick="rejectrequest()"><i class="fa fa-times" aria-hidden="true"></i></button></span>
+                                                    </div>
+                                                    <div class="col-sm-3 col-xs-3 pull-right sideBar-time">
+                                                        <span class="pull-right"><button type="submit" class="btn btn-success" style="width:100%;" id="acceptbutton" onclick="acceptrequest()"><i class="fa fa-check" aria-hidden="true"></i></button></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`;
+                                }
+                                $(".requests").append(html);
+                            }
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+            $(".newMessage-back").click(function () {
+                $(".side-three").css({
+                    left: "-100%",
+                });
+            });
+        });
+
+        $("#update").click(function () {
+            $("#profile").show();
+        })
+
+        //user Profile
+        $(function () {
+            var username = '{{user.name}}';
+            $(".heading-avatar").click(function () {
+                $(".side-four").css({
+                    left: "0",
+                });
+                $(".oldname").attr('placeholder', username);
+            });
+            $(".newMessage-back").click(function () {
+                $(".side-four").css({
+                    left: "-100%",
+                });
+            });
+        });
+
+        //update profile info
+        $("#updateProfile").submit((event) => {
+            event.preventDefault();
+            var name = $("input[name=newName]").val();
+            $.ajax({
+                url: "/update-profile",
+                type: "POST",
+                data: {
+                    name: name,
+                    sender_id: sender_id,
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("input[name=newName]").val("");
+                        $("#userName").text(response.data.name);
+                        socket.emit("profile-updated", response.data);
+                    }
+                }
+            });
+        });
+
+        //update new name
+        socket.on("loadName", function (data) {
+            var findUser = $('div[id="userlist"]').children(".sideBar-body")
+                .filter(function () {
+                    return $(this).data("id") == data.id;
+                }).children(".sideBar-main").children(".row").children(".sideBar-name").children("#Rname").text(data.name);
+        });
+
+        //generate report
+        $("#generateReport").submit((event) => {
+            event.preventDefault();
+            $.ajax({
+                url: "/generate-report",
+                type: "POST",
+                data: {
+                    id: sender_id
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#report").show();
+                        $("#loginCount").text(response.data);
+                        $("#activeCount").text(response.active);
+
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            })
+        });
+
+        socket.on("active-users", function (data) {
+            $("#activeCount").text(data.active_users);
+        });
+
+        $('.sideBar-body').click(function () {
+            receiver_id = $(this).attr('data-id');
+            $('#notstarted').hide();
+            $('#started').show();
+
+            //requesting old chats from server
+            socket.emit('existChats', { sender_id: sender_id, receiver_id: receiver_id });
+        });
+
+    </script>
+</body>
+
+</html>
